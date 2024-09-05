@@ -133,20 +133,21 @@ def show_progress_bar():
 
 # Updated Function to translate and show attention (with vocabulary checks)
 def translate_and_show_attention(sentence):
-    sentence = normalizeString(sentence)  # Normalize the input sentence
-    st.markdown(f"**Normalized sentence:** `{sentence}`")
+    # Normalize the input sentence
+    normalized_sentence = normalizeString(sentence)
 
     # Check the tokenization process and input tensor size
     try:
-        input_tensor = tensorFromSentence(input_lang, sentence)  # No device needed here
+        input_tensor = tensorFromSentence(input_lang, normalized_sentence)  # No device needed here
         tensor_size = input_tensor.size()
     except Exception as e:
         st.error(f"Error converting sentence to tensor: {e}")
         return
 
-    # Add dropdown list for language details and tensor size
+    # Add all details, including normalized sentence and tensor size, into the dropdown list
     with st.expander("🔍 Translation Details"):
         st.markdown(f"""
+        **Normalized sentence:** `{normalized_sentence}`<br>
         **Input language words:** {input_lang.n_words}<br>
         **Output language words:** {output_lang.n_words}<br>
         **Input tensor size:** {tensor_size}
@@ -156,21 +157,21 @@ def translate_and_show_attention(sentence):
     show_progress_bar()
 
     # Check if the word exists in input_lang vocabulary
-    for word in sentence.split(' '):
+    for word in normalized_sentence.split(' '):
         if word not in input_lang.word2index:
             st.error(f"Word '{word}' not in input_lang vocabulary.")
             return
-    
+
     # Try the evaluation function
     try:
-        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)  # No device needed
+        output_words, attentions = evaluate(encoder, decoder, normalized_sentence, input_lang, output_lang)  # No device needed
         # Use a floating box to highlight the translated sentence
         st.markdown(f"""
         <div class="translated-box">
         <b>Translated sentence:</b> {' '.join(output_words)}
         </div>
         """, unsafe_allow_html=True)
-        show_attention(sentence, output_words, attentions)
+        show_attention(normalized_sentence, output_words, attentions)
     except Exception as e:
         st.error(f"Error during evaluation: {e}")
 
