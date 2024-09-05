@@ -67,9 +67,9 @@ def translate_and_show_attention(sentence):
         st.error(f"Error converting sentence to tensor: {e}")
         return
     
-    # Try the evaluation function
+    # Try the evaluation function, pass the device
     try:
-        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)
+        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang, device)
         st.write("Translated sentence:", ' '.join(output_words))
         show_attention(sentence, output_words, attentions)
     except Exception as e:
