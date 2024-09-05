@@ -3,7 +3,7 @@ import torch
 import pickle
 from model import EncoderRNN, AttnDecoderRNN, evaluate 
 import matplotlib.pyplot as plt
-
+from model import Lang 
 
 # Load the full models directly, forcing the model to load on CPU
 encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
