@@ -9,7 +9,7 @@ from model import Lang
 from nltk.translate.bleu_score import sentence_bleu
 
 # Load the reference translations from the file
-def load_reference_data(eng-fin.txt):
+def load_reference_data(eng_fin.txt):
     references = {}
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
@@ -19,7 +19,7 @@ def load_reference_data(eng-fin.txt):
     return references
 
 # Load the original reference data
-reference_translations = load_reference_data('eng-fin.txt')
+reference_translations = load_reference_data('eng_fin.txt')
 
 # Function to calculate BLEU score using reference translations
 def calculate_bleu(output_words, sentence):
