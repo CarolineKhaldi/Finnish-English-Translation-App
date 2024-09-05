@@ -56,6 +56,19 @@ st.markdown("""
         from { opacity: 0; }
         to { opacity: 1; }
     }
+    .progress-bar {
+        width: 100%;
+        background-color: #f3f3f3;
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+    .progress-bar-fill {
+        height: 24px;
+        border-radius: 20px;
+        width: 0;
+        background-color: #4CAF50;
+        transition: width 0.5s ease-in-out;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -123,12 +136,20 @@ def translate_and_show_attention(sentence):
     sentence = normalizeString(sentence)  # Normalize the input sentence
     st.markdown(f"**Normalized sentence:** `{sentence}`")
 
-    # Add dropdown list for language details
+    # Check the tokenization process and input tensor size
+    try:
+        input_tensor = tensorFromSentence(input_lang, sentence)  # No device needed here
+        tensor_size = input_tensor.size()
+    except Exception as e:
+        st.error(f"Error converting sentence to tensor: {e}")
+        return
+
+    # Add dropdown list for language details and tensor size
     with st.expander("🔍 Translation Details"):
         st.markdown(f"""
         **Input language words:** {input_lang.n_words}<br>
         **Output language words:** {output_lang.n_words}<br>
-        **Input tensor size:** {tensorFromSentence(input_lang, sentence).size()}
+        **Input tensor size:** {tensor_size}
         """, unsafe_allow_html=True)
 
     # Show progress bar
@@ -139,14 +160,6 @@ def translate_and_show_attention(sentence):
         if word not in input_lang.word2index:
             st.error(f"Word '{word}' not in input_lang vocabulary.")
             return
-
-    # Check the tokenization process
-    try:
-        input_tensor = tensorFromSentence(input_lang, sentence)  # No device needed here
-        st.write(f"Input tensor size: {input_tensor.size()}")
-    except Exception as e:
-        st.error(f"Error converting sentence to tensor: {e}")
-        return
     
     # Try the evaluation function
     try:
