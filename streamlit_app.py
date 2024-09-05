@@ -1,7 +1,8 @@
 import streamlit as st
 import torch
 import pickle
-from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence 
+import re  # For string normalization
+from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # Ensure tensorFromSentence is imported
 import matplotlib.pyplot as plt
 from model import Lang 
 
@@ -18,6 +19,13 @@ with open('input_lang.pkl', 'rb') as f:
 
 with open('output_lang.pkl', 'rb') as f:
     output_lang = pickle.load(f)
+
+# Define normalizeString function
+def normalizeString(s):
+    s = s.lower().strip()
+    s = re.sub(r"([.!?])", r" \1", s)  # Separate punctuation
+    s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)  # Remove anything that's not a letter or punctuation
+    return s
 
 # Function to show attention
 def show_attention(input_sentence, output_words, attentions):
