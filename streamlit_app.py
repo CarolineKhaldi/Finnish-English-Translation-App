@@ -172,7 +172,11 @@ def translate_and_show_attention(sentence):
         <b>Translated sentence:</b> {' '.join(output_words)}
         </div>
         """, unsafe_allow_html=True)
-        show_attention(normalized_sentence, output_words, attentions)
+
+        # Add attention heatmap inside a dropdown (expander)
+        with st.expander("🎨 Attention Visualization"):
+            show_attention(normalized_sentence, output_words, attentions)
+
     except Exception as e:
         st.error(f"Error during evaluation: {e}")
 
@@ -190,5 +194,7 @@ def main():
     <center><small>Made with 💡 and ❤️ by [Your Name]</small></center>
     """, unsafe_allow_html=True)
 
+if __name__ == '__main__':
+    main()
 if __name__ == '__main__':
     main()
