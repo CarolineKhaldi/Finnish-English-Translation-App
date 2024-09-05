@@ -23,21 +23,27 @@ st.markdown("""
         display: flex;
         justify-content: center;
     }
-    .stTextInput, .stButton {
-        max-width: 80%;
-        margin: 0 auto;
+    .stTextInput>div>div>input {
+        border: 2px solid #ADD8E6;  /* Light blue border */
+        border-radius: 12px;
+        padding: 10px;
+    }
+    .stTextInput>div>div>input:focus {
+        outline: none;
+        border: 2px solid #87CEEB;  /* Lighter blue border on focus */
     }
     .stButton>button {
-        background-color: #4CAF50;
+        background-color: #87CEEB;  /* Light blue button */
         color: white;
         font-size: 18px;
         border-radius: 12px;
         box-shadow: 2px 2px 5px #888888;
         transition: all 0.3s ease;
-        border: none;  /* Removed the red border */
+        border: none;
+        padding: 10px 24px;
     }
     .stButton>button:hover {
-        background-color: #45a049;
+        background-color: #00BFFF;
         box-shadow: 2px 2px 10px #666666;
     }
     input {
@@ -194,7 +200,5 @@ def main():
     <center><small>Made with 💡 and ❤️ by [Your Name]</small></center>
     """, unsafe_allow_html=True)
 
-if __name__ == '__main__':
-    main()
 if __name__ == '__main__':
     main()
