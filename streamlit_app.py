@@ -2,30 +2,53 @@ import streamlit as st
 import torch
 import pickle
 import re
-from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # Ensure tensorFromSentence is imported
+from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from model import Lang 
 
-# Set app-wide color styles using Streamlit's Markdown and HTML capabilities
+# App-wide CSS for centering content and enhancing UI
 st.markdown(
     """
     <style>
     .reportview-container {
         background-color: #f0f8ff;
         color: #333;
+        display: flex;
+        justify-content: center;
     }
-    .sidebar .sidebar-content {
-        background-color: #f0fff4;
+    .stTextInput, .stButton {
+        max-width: 80%;
+        margin: 0 auto;
     }
-    button {
+    .stButton>button {
         background-color: #4CAF50;
         color: white;
         font-size: 18px;
+        border-radius: 12px;
+        box-shadow: 2px 2px 5px #888888;
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+        box-shadow: 2px 2px 10px #666666;
     }
     input {
         border-radius: 8px;
         padding: 10px;
+        width: 100%;
+    }
+    .translated-box {
+        background-color: #ffebcd;
+        padding: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
     </style>
     """,
@@ -115,7 +138,7 @@ def translate_and_show_attention(sentence):
         output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)  # No device needed
         # Use a floating box to highlight the translated sentence
         st.markdown(f"""
-        <div style="background-color: #ffebcd; padding: 10px; border-radius: 5px;">
+        <div class="translated-box">
         <b>Translated sentence:</b> {' '.join(output_words)}
         </div>
         """, unsafe_allow_html=True)
