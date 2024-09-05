@@ -1,6 +1,7 @@
 import streamlit as st
 import torch
-from your_model_file import EncoderRNN, AttnDecoderRNN, evaluate, input_lang, output_lang  # Adjust as needed
+import pickle
+from model import EncoderRNN, AttnDecoderRNN, evaluate  # Make sure to import from your model file
 import matplotlib.pyplot as plt
 
 # Load the full models directly
@@ -9,6 +10,13 @@ decoder = torch.load('decoder_full.pth')
 
 encoder.eval()
 decoder.eval()
+
+# Load input_lang and output_lang
+with open('input_lang.pkl', 'rb') as f:
+    input_lang = pickle.load(f)
+
+with open('output_lang.pkl', 'rb') as f:
+    output_lang = pickle.load(f)
 
 # Function to show attention
 def show_attention(input_sentence, output_words, attentions):
@@ -26,9 +34,7 @@ def show_attention(input_sentence, output_words, attentions):
 
 # Function to translate and show attention
 def translate_and_show_attention(sentence):
-    # Use the already loaded models (encoder and decoder)
-    output_words, attentions = evaluate(encoder, decoder, sentence)
-    
+    output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)
     st.write("Translated sentence:", ' '.join(output_words))
     show_attention(sentence, output_words, attentions)
 
