@@ -2,16 +2,13 @@ import streamlit as st
 import torch
 import pickle
 import re  # For string normalization
-from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # Ensure tensorFromSentence is imported
+from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  
 import matplotlib.pyplot as plt
 from model import Lang 
 
-# Define the device globally
-device = torch.device('cpu')  # Force the use of CPU
-
 # Load the full models directly, forcing the model to load on CPU
-encoder = torch.load('encoder_full.pth', map_location=device)
-decoder = torch.load('decoder_full.pth', map_location=device)
+encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
+decoder = torch.load('decoder_full.pth', map_location=torch.device('cpu'))
 
 encoder.eval()
 decoder.eval()
@@ -61,15 +58,15 @@ def translate_and_show_attention(sentence):
 
     # Check the tokenization process
     try:
-        input_tensor = tensorFromSentence(input_lang, sentence).to(device)  # Move to the correct device
+        input_tensor = tensorFromSentence(input_lang, sentence)  # No device needed here
         st.write(f"Input tensor size: {input_tensor.size()}")
     except Exception as e:
         st.error(f"Error converting sentence to tensor: {e}")
         return
     
-    # Try the evaluation function, pass the device
+    # Try the evaluation function
     try:
-        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang, device)  # Pass device here
+        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)  # No device needed
         st.write("Translated sentence:", ' '.join(output_words))
         show_attention(sentence, output_words, attentions)
     except Exception as e:
