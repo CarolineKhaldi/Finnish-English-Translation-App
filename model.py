@@ -92,7 +92,7 @@ def evaluate(encoder, decoder, sentence, input_lang, output_lang, max_length=10)
         input_length = input_tensor.size()[0]
         encoder_hidden = encoder.initHidden()  # No device needed
 
-        encoder_outputs = torch.zeros(max_length, encoder.hidden_size)
+        encoder_outputs = torch.zeros(max_length, encoder.hidden_size)  # Remove device
 
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(input_tensor[ei], encoder_hidden)
