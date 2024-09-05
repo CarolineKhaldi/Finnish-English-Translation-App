@@ -6,9 +6,12 @@ from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # En
 import matplotlib.pyplot as plt
 from model import Lang 
 
+# Define the device to run the models on
+device = torch.device('cpu')  # Force the use of CPU
+
 # Load the full models directly, forcing the model to load on CPU
-encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
-decoder = torch.load('decoder_full.pth', map_location=torch.device('cpu'))
+encoder = torch.load('encoder_full.pth', map_location=device)
+decoder = torch.load('decoder_full.pth', map_location=device)
 
 encoder.eval()
 decoder.eval()
@@ -58,7 +61,7 @@ def translate_and_show_attention(sentence):
 
     # Check the tokenization process
     try:
-        input_tensor = tensorFromSentence(input_lang, sentence)
+        input_tensor = tensorFromSentence(input_lang, sentence).to(device)  # Move to the correct device
         st.write(f"Input tensor size: {input_tensor.size()}")
     except Exception as e:
         st.error(f"Error converting sentence to tensor: {e}")
