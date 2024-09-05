@@ -80,7 +80,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # App title and subtitle with emojis
-st.title("🌍 Finnish-English Translation App")
+st.title("🌍 Finnish to English Translation")
 st.markdown("Translate Finnish sentences into English with a beautiful attention visualization!")
 
 # Sidebar for instructions
@@ -92,7 +92,7 @@ st.sidebar.write("""
 """)
 
 # Sidebar credits
-st.sidebar.write("Made with 💡 and ❤️ by [Your Name]")
+st.sidebar.write("")
 
 # Load the full models directly, forcing the model to load on CPU
 encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
@@ -171,16 +171,16 @@ def translate_and_show_attention(sentence):
 
     # Try the evaluation function
     try:
-        output_words, attentions = evaluate(encoder, decoder, normalized_sentence, input_lang, output_lang)  # No device needed
+        output_words, attentions = evaluate(encoder, decoder, normalized_sentence, input_lang, output_lang) 
         # Use a floating box to highlight the translated sentence
         st.markdown(f"""
         <div class="translated-box">
-        <b>Translated sentence:</b> {' '.join(output_words)}
+        <b> 📝 Translated sentence:</b> {' '.join(output_words)}
         </div>
         """, unsafe_allow_html=True)
 
         # Add attention heatmap inside a dropdown (expander)
-        with st.expander("🎨 Attention Visualization"):
+        with st.expander("Attention Visualization"):
             show_attention(normalized_sentence, output_words, attentions)
 
     except Exception as e:
@@ -188,16 +188,16 @@ def translate_and_show_attention(sentence):
 
 # Streamlit app main function
 def main():
-    st.markdown("## 🎨 Translate a Sentence")
-    sentence = st.text_input("Enter a Finnish sentence:", help="Write a sentence in Finnish and see its translation!")
+    st.markdown("## Translate a Sentence")
+    sentence = st.text_input(" ✍ Enter a Finnish sentence:", help="Write a sentence in Finnish and see its translation!")
 
-    if st.button("✨ Translate"):
+    if st.button("📖 Translate"):
         translate_and_show_attention(sentence)
 
     # Footer with credits
     st.markdown("""
     <hr>
-    <center><small>Made with 💡 and ❤️ by [Your Name]</small></center>
+    <center><small>Made by [Caroline Marquis]</small></center>
     """, unsafe_allow_html=True)
 
 if __name__ == '__main__':
