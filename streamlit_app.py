@@ -5,35 +5,86 @@ import re
 from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from model import Lang
-from nltk.translate.bleu_score import sentence_bleu
+from model import Lang 
 
-# Load the reference translations from the file
-def load_reference_data(eng_fin_txt):
-    references = {}
-    with open(eng_fin_txt, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-        for line in lines:
-            try:
-                fin, eng = line.strip().split('\t')  # Assuming the file is tab-separated
-                references[fin] = eng
-            except ValueError:
-                st.error(f"Error processing line: {line.strip()} - Ensure it is properly tab-separated.")
-    return references
-# Load the original reference data
-reference_translations = load_reference_data('eng_fin.txt')
+# App-wide CSS for centering content and enhancing UI
+st.markdown(
+    """
+    <style>
+    .reportview-container {
+        background-color: #f0f8ff;
+        color: #333;
+        display: flex;
+        justify-content: center;
+    }
+    .stTextInput, .stButton {
+        max-width: 80%;
+        margin: 0 auto;
+    }
+    .stButton>button {
+        background-color: #4CAF50;
+        color: white;
+        font-size: 18px;
+        border-radius: 12px;
+        box-shadow: 2px 2px 5px #888888;
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+        box-shadow: 2px 2px 10px #666666;
+    }
+    input {
+        border-radius: 8px;
+        padding: 10px;
+        width: 100%;
+    }
+    .translated-box {
+        background-color: #ffebcd;
+        padding: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Function to calculate BLEU score using reference translations
-def calculate_bleu(output_words, sentence):
-    if sentence in reference_translations:
-        reference = [reference_translations[sentence].split(' ')]  # Use the correct English translation
-        candidate = output_words[:-1]  # Ignore the <EOS> token in the output
-        bleu_score = sentence_bleu(reference, candidate)
-        return bleu_score * 100  # Return percentage BLEU score
-    else:
-        return 0  # No reference available
+# App title and subtitle with emojis
+st.title("🌍 Finnish-English Translation App")
+st.markdown("Translate Finnish sentences into English with a beautiful attention visualization!")
 
-# Define the normalizeString function
+# Sidebar for instructions
+st.sidebar.header("📖 Instructions")
+st.sidebar.write("""
+- Enter a Finnish sentence in the input box.
+- Press the **Translate** button.
+- The translation and a colorful attention heatmap will be displayed.
+""")
+
+# Sidebar credits
+st.sidebar.write("Made with 💡 and ❤️ by [Your Name]")
+
+# Load the full models directly, forcing the model to load on CPU
+encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
+decoder = torch.load('decoder_full.pth', map_location=torch.device('cpu'))
+
+encoder.eval()
+decoder.eval()
+
+# Load input_lang and output_lang
+with open('input_lang.pkl', 'rb') as f:
+    input_lang = pickle.load(f)
+
+with open('output_lang.pkl', 'rb') as f:
+    output_lang = pickle.load(f)
+
+# Define normalizeString function
 def normalizeString(s):
     s = s.lower().strip()
     s = re.sub(r"([.!?])", r" \1", s)  # Separate punctuation
@@ -55,11 +106,19 @@ def show_attention(input_sentence, output_words, attentions):
 
     st.pyplot(fig)
 
-# Updated function to translate, show attention, and calculate BLEU score
+# Updated Function to translate and show attention (with vocabulary checks)
 def translate_and_show_attention(sentence):
     sentence = normalizeString(sentence)  # Normalize the input sentence
     st.markdown(f"**Normalized sentence:** `{sentence}`")
     
+    # Display language information in a card
+    st.markdown("""
+        <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px;">
+        <b>Input language words:</b> {}<br>
+        <b>Output language words:</b> {}
+        </div>
+    """.format(input_lang.n_words, output_lang.n_words), unsafe_allow_html=True)
+
     # Check if the word exists in input_lang vocabulary
     for word in sentence.split(' '):
         if word not in input_lang.word2index:
@@ -77,25 +136,22 @@ def translate_and_show_attention(sentence):
     # Try the evaluation function
     try:
         output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)  # No device needed
-        # Display the translated sentence
-        st.markdown(f"**Translated sentence:** {' '.join(output_words)}")
-        
-        # Calculate and display BLEU score using the reference translation
-        bleu_score = calculate_bleu(output_words, sentence)
-        st.markdown(f"**BLEU Score:** {bleu_score:.2f}%")
-        
+        # Use a floating box to highlight the translated sentence
+        st.markdown(f"""
+        <div class="translated-box">
+        <b>Translated sentence:</b> {' '.join(output_words)}
+        </div>
+        """, unsafe_allow_html=True)
         show_attention(sentence, output_words, attentions)
     except Exception as e:
         st.error(f"Error during evaluation: {e}")
 
 # Streamlit app main function
 def main():
-    st.title("Finnish-English Translation App")
-    st.write("Translate Finnish sentences into English with BLEU score and attention visualization!")
+    st.markdown("## 🎨 Translate a Sentence")
+    sentence = st.text_input("Enter a Finnish sentence:", help="Write a sentence in Finnish and see its translation!")
 
-    sentence = st.text_input("Enter a Finnish sentence:")
-
-    if st.button("Translate"):
+    if st.button("✨ Translate"):
         translate_and_show_attention(sentence)
 
     # Footer with credits
@@ -103,18 +159,6 @@ def main():
     <hr>
     <center><small>Made with 💡 and ❤️ by [Your Name]</small></center>
     """, unsafe_allow_html=True)
-
-# Load models and language data
-encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
-decoder = torch.load('decoder_full.pth', map_location=torch.device('cpu'))
-encoder.eval()
-decoder.eval()
-
-with open('input_lang.pkl', 'rb') as f:
-    input_lang = pickle.load(f)
-
-with open('output_lang.pkl', 'rb') as f:
-    output_lang = pickle.load(f)
 
 if __name__ == '__main__':
     main()
