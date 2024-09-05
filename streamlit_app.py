@@ -81,7 +81,7 @@ st.markdown("""
 
 # App title and subtitle with emojis
 st.title("🌍 Finnish to English Translation")
-st.markdown("Translate Finnish sentences into English with a beautiful attention visualization!")
+st.markdown("Translate Finnish sentences into English")
 
 # Sidebar for instructions
 st.sidebar.header("📖 Instructions")
@@ -197,7 +197,7 @@ def main():
     # Footer with credits
     st.markdown("""
     <hr>
-    <center><small>Made by Caroline Marquis </small></center>
+    <center><small> </small></center>
     """, unsafe_allow_html=True)
 
 if __name__ == '__main__':
