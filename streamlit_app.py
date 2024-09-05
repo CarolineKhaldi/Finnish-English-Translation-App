@@ -5,12 +5,18 @@ import re
 from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from model import Lang 
+from model import Lang
 
-# App-wide CSS for centering content and enhancing UI
-st.markdown(
-    """
+# Custom Google Font and custom CSS styling for improvements
+st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f0f8ff;
+    }
+    
     .reportview-container {
         background-color: #f0f8ff;
         color: #333;
@@ -51,9 +57,7 @@ st.markdown(
         to { opacity: 1; }
     }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+    """, unsafe_allow_html=True)
 
 # App title and subtitle with emojis
 st.title("🌍 Finnish-English Translation App")
@@ -106,18 +110,29 @@ def show_attention(input_sentence, output_words, attentions):
 
     st.pyplot(fig)
 
+# Show progress bar when translating
+def show_progress_bar():
+    st.markdown("""
+        <div class="progress-bar">
+            <div class="progress-bar-fill"></div>
+        </div>
+        """, unsafe_allow_html=True)
+
 # Updated Function to translate and show attention (with vocabulary checks)
 def translate_and_show_attention(sentence):
     sentence = normalizeString(sentence)  # Normalize the input sentence
     st.markdown(f"**Normalized sentence:** `{sentence}`")
-    
-    # Display language information in a card
-    st.markdown("""
-        <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px;">
-        <b>Input language words:</b> {}<br>
-        <b>Output language words:</b> {}
-        </div>
-    """.format(input_lang.n_words, output_lang.n_words), unsafe_allow_html=True)
+
+    # Add dropdown list for language details
+    with st.expander("🔍 Translation Details"):
+        st.markdown(f"""
+        **Input language words:** {input_lang.n_words}<br>
+        **Output language words:** {output_lang.n_words}<br>
+        **Input tensor size:** {tensorFromSentence(input_lang, sentence).size()}
+        """, unsafe_allow_html=True)
+
+    # Show progress bar
+    show_progress_bar()
 
     # Check if the word exists in input_lang vocabulary
     for word in sentence.split(' '):
