@@ -1,7 +1,7 @@
 import streamlit as st
 import torch
 import pickle
-from model import EncoderRNN, AttnDecoderRNN, evaluate 
+from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # Ensure tensorFromSentence is imported
 import matplotlib.pyplot as plt
 from model import Lang 
 
@@ -33,23 +33,7 @@ def show_attention(input_sentence, output_words, attentions):
 
     st.pyplot(fig)
 
-# Function to translate and show attention
-def translate_and_show_attention(sentence):
-    output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)
-    st.write("Translated sentence:", ' '.join(output_words))
-    show_attention(sentence, output_words, attentions)
-
-# Streamlit app main function
-def main():
-    st.title("Finnish-English Translation App")
-
-    sentence = st.text_input("Enter a Finnish sentence:")
-
-    if st.button("Translate"):
-        translate_and_show_attention(sentence)
-
-import streamlit as st
-
+# Function to translate and show attention (with debugging)
 def translate_and_show_attention(sentence):
     st.write(f"Original sentence: {sentence}")
     
@@ -72,6 +56,15 @@ def translate_and_show_attention(sentence):
         show_attention(sentence, output_words, attentions)
     except Exception as e:
         st.error(f"Error during evaluation: {e}")
-        
+
+# Streamlit app main function
+def main():
+    st.title("Finnish-English Translation App")
+
+    sentence = st.text_input("Enter a Finnish sentence:")
+
+    if st.button("Translate"):
+        translate_and_show_attention(sentence)
+
 if __name__ == '__main__':
     main()
