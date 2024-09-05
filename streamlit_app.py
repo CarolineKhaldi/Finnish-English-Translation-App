@@ -11,7 +11,7 @@ from nltk.translate.bleu_score import sentence_bleu
 # Load the reference translations from the file
 def load_reference_data(eng_fin_txt):
     references = {}
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(eng_fin_txt, 'r', encoding='utf-8') as f:  # Changed file_path to eng_fin_txt
         lines = f.readlines()
         for line in lines:
             fin, eng = line.strip().split('\t')  # Assuming the file is tab-separated
