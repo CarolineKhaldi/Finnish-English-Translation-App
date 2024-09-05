@@ -6,7 +6,7 @@ from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # En
 import matplotlib.pyplot as plt
 from model import Lang 
 
-# Define the device to run the models on
+# Define the device globally
 device = torch.device('cpu')  # Force the use of CPU
 
 # Load the full models directly, forcing the model to load on CPU
