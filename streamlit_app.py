@@ -4,9 +4,10 @@ import pickle
 from model import EncoderRNN, AttnDecoderRNN, evaluate 
 import matplotlib.pyplot as plt
 
-# Load the full models directly
-encoder = torch.load('encoder_full.pth')
-decoder = torch.load('decoder_full.pth')
+
+# Load the full models directly, forcing the model to load on CPU
+encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
+decoder = torch.load('decoder_full.pth', map_location=torch.device('cpu'))
 
 encoder.eval()
 decoder.eval()
