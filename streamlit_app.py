@@ -1,25 +1,14 @@
 import streamlit as st
 import torch
-from your_model_file import EncoderRNN, AttnDecoderRNN, evaluate, input_lang, output_lang
+from your_model_file import EncoderRNN, AttnDecoderRNN, evaluate, input_lang, output_lang  # Adjust as needed
 import matplotlib.pyplot as plt
 
-# Load pre-trained models
-encoder_model_path = "encoder.pth"
-decoder_model_path = "decoder.pth"
+# Load the full models directly
+encoder = torch.load('encoder_full.pth')
+decoder = torch.load('decoder_full.pth')
 
-# Function to load models
-def load_models(encoder_path, decoder_path):
-    hidden_size = 256
-    encoder = EncoderRNN(input_lang.n_words, hidden_size)
-    decoder = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1)
-    
-    encoder.load_state_dict(torch.load(encoder_path, map_location=torch.device('cpu')))
-    decoder.load_state_dict(torch.load(decoder_path, map_location=torch.device('cpu')))
-    
-    encoder.eval()
-    decoder.eval()
-    
-    return encoder, decoder
+encoder.eval()
+decoder.eval()
 
 # Function to show attention
 def show_attention(input_sentence, output_words, attentions):
@@ -37,7 +26,7 @@ def show_attention(input_sentence, output_words, attentions):
 
 # Function to translate and show attention
 def translate_and_show_attention(sentence):
-    encoder, decoder = load_models(encoder_model_path, decoder_model_path)
+    # Use the already loaded models (encoder and decoder)
     output_words, attentions = evaluate(encoder, decoder, sentence)
     
     st.write("Translated sentence:", ' '.join(output_words))
