@@ -86,20 +86,20 @@ def tensorFromSentence(lang, sentence):
     indexes.append(EOS_token)
     return torch.tensor(indexes, dtype=torch.long).view(-1, 1)
 
-def evaluate(encoder, decoder, sentence, input_lang, output_lang, device, max_length=10):
+def evaluate(encoder, decoder, sentence, input_lang, output_lang, max_length=10):
     with torch.no_grad():
-        # Convert the sentence to tensor and move it to the appropriate device
-        input_tensor = tensorFromSentence(input_lang, sentence).to(device)
+        # Convert the sentence to tensor (default CPU)
+        input_tensor = tensorFromSentence(input_lang, sentence)
         input_length = input_tensor.size()[0]
-        encoder_hidden = encoder.initHidden().to(device)
+        encoder_hidden = encoder.initHidden()  # No device needed
 
-        encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
+        encoder_outputs = torch.zeros(max_length, encoder.hidden_size)
 
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(input_tensor[ei], encoder_hidden)
             encoder_outputs[ei] += encoder_output[0, 0]
 
-        decoder_input = torch.tensor([[SOS_token]], device=device)  # SOS token
+        decoder_input = torch.tensor([[SOS_token]])  # SOS token
         decoder_hidden = encoder_hidden
 
         decoded_words = []
