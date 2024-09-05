@@ -34,6 +34,7 @@ st.markdown("""
         border-radius: 12px;
         box-shadow: 2px 2px 5px #888888;
         transition: all 0.3s ease;
+        border: none;  /* Removed the red border */
     }
     .stButton>button:hover {
         background-color: #45a049;
