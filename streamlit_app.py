@@ -1,7 +1,7 @@
 import streamlit as st
 import torch
 import pickle
-from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence  # Ensure tensorFromSentence is imported
+from model import EncoderRNN, AttnDecoderRNN, evaluate, tensorFromSentence 
 import matplotlib.pyplot as plt
 from model import Lang 
 
@@ -33,13 +33,20 @@ def show_attention(input_sentence, output_words, attentions):
 
     st.pyplot(fig)
 
-# Function to translate and show attention (with debugging)
+# Updated Function to translate and show attention (with vocabulary checks)
 def translate_and_show_attention(sentence):
-    st.write(f"Original sentence: {sentence}")
+    sentence = normalizeString(sentence)  # Normalize the input sentence
+    st.write(f"Normalized sentence: {sentence}")
     
     # Check that input_lang and output_lang are loaded correctly
     st.write(f"input_lang n_words: {input_lang.n_words}")
     st.write(f"output_lang n_words: {output_lang.n_words}")
+
+    # Check if the word exists in input_lang vocabulary
+    for word in sentence.split(' '):
+        if word not in input_lang.word2index:
+            st.error(f"Word '{word}' not in input_lang vocabulary.")
+            return
 
     # Check the tokenization process
     try:
