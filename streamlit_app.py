@@ -106,7 +106,17 @@ def show_attention(input_sentence, output_words, attentions):
 
     st.pyplot(fig)
 
-# Updated Function to translate and show attention (with vocabulary checks)
+# Calculate rough accuracy using word overlap between target and predicted translation
+def calculate_accuracy(output_words, sentence):
+    target_words = set(sentence.split(' '))
+    predicted_words = set(output_words[:-1])  # Ignore <EOS>
+    
+    correct_words = len(target_words.intersection(predicted_words))
+    accuracy = (correct_words / len(target_words)) * 100 if target_words else 0
+
+    return accuracy
+
+# Updated Function to translate and show attention (with vocabulary checks and accuracy)
 def translate_and_show_attention(sentence):
     sentence = normalizeString(sentence)  # Normalize the input sentence
     st.markdown(f"**Normalized sentence:** `{sentence}`")
@@ -142,6 +152,11 @@ def translate_and_show_attention(sentence):
         <b>Translated sentence:</b> {' '.join(output_words)}
         </div>
         """, unsafe_allow_html=True)
+        
+        # Show accuracy of translation
+        accuracy = calculate_accuracy(output_words, sentence)
+        st.markdown(f"**Translation accuracy:** {accuracy:.2f}%")
+        
         show_attention(sentence, output_words, attentions)
     except Exception as e:
         st.error(f"Error during evaluation: {e}")
