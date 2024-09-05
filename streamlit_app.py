@@ -7,6 +7,31 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from model import Lang 
 
+# Set app-wide color styles using Streamlit's Markdown and HTML capabilities
+st.markdown(
+    """
+    <style>
+    .reportview-container {
+        background-color: #f0f8ff;
+        color: #333;
+    }
+    .sidebar .sidebar-content {
+        background-color: #f0fff4;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        font-size: 18px;
+    }
+    input {
+        border-radius: 8px;
+        padding: 10px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # App title and subtitle with emojis
 st.title("🌍 Finnish-English Translation App")
 st.markdown("Translate Finnish sentences into English with a beautiful attention visualization!")
@@ -16,11 +41,11 @@ st.sidebar.header("📖 Instructions")
 st.sidebar.write("""
 - Enter a Finnish sentence in the input box.
 - Press the **Translate** button.
-- The translation and a colored attention heatmap will be displayed.
+- The translation and a colorful attention heatmap will be displayed.
 """)
 
 # Sidebar credits
-st.sidebar.write("Made with ❤️ by [Your Name]")
+st.sidebar.write("Made with 💡 and ❤️ by [Your Name]")
 
 # Load the full models directly, forcing the model to load on CPU
 encoder = torch.load('encoder_full.pth', map_location=torch.device('cpu'))
@@ -43,10 +68,10 @@ def normalizeString(s):
     s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)  # Remove anything that's not a letter or punctuation
     return s
 
-# Function to show attention with pastel colors
+# Function to show attention with vibrant colors
 def show_attention(input_sentence, output_words, attentions):
     fig, ax = plt.subplots(figsize=(8, 6))  # Adjust figure size for better readability
-    cax = ax.matshow(attentions.numpy(), cmap='Pastel1')  # Use 'Pastel1' colormap for a soft pastel heatmap
+    cax = ax.matshow(attentions.numpy(), cmap='plasma')  # Use 'plasma' colormap for vibrant heatmap colors
     fig.colorbar(cax)
 
     ax.set_xticklabels([''] + input_sentence.split(' ') + ['<EOS>'], rotation=90)
@@ -88,23 +113,28 @@ def translate_and_show_attention(sentence):
     # Try the evaluation function
     try:
         output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang)  # No device needed
-        st.markdown(f"**Translated sentence:** `{' '.join(output_words)}`")
+        # Use a floating box to highlight the translated sentence
+        st.markdown(f"""
+        <div style="background-color: #ffebcd; padding: 10px; border-radius: 5px;">
+        <b>Translated sentence:</b> {' '.join(output_words)}
+        </div>
+        """, unsafe_allow_html=True)
         show_attention(sentence, output_words, attentions)
     except Exception as e:
         st.error(f"Error during evaluation: {e}")
 
 # Streamlit app main function
 def main():
-    st.markdown("## Translate a Sentence")
-    sentence = st.text_input("Enter a Finnish sentence:")
+    st.markdown("## 🎨 Translate a Sentence")
+    sentence = st.text_input("Enter a Finnish sentence:", help="Write a sentence in Finnish and see its translation!")
 
-    if st.button("Translate"):
+    if st.button("✨ Translate"):
         translate_and_show_attention(sentence)
 
     # Footer with credits
     st.markdown("""
     <hr>
-    <center><small>Made with ❤️ by [Your Name]</small></center>
+    <center><small>Made with 💡 and ❤️ by [Your Name]</small></center>
     """, unsafe_allow_html=True)
 
 if __name__ == '__main__':
