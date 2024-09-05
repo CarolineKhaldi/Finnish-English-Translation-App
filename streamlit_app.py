@@ -1,7 +1,7 @@
 import streamlit as st
 import torch
 import pickle
-from model import EncoderRNN, AttnDecoderRNN, evaluate  # Make sure to import from your model file
+from model import EncoderRNN, AttnDecoderRNN, evaluate 
 import matplotlib.pyplot as plt
 
 # Load the full models directly
