@@ -197,7 +197,7 @@ def main():
     # Footer with credits
     st.markdown("""
     <hr>
-    <center><small>Made by [Caroline Marquis]</small></center>
+    <center><small>Made by Caroline Marquis </small></center>
     """, unsafe_allow_html=True)
 
 if __name__ == '__main__':
