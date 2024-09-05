@@ -69,7 +69,7 @@ def translate_and_show_attention(sentence):
     
     # Try the evaluation function, pass the device
     try:
-        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang, device)
+        output_words, attentions = evaluate(encoder, decoder, sentence, input_lang, output_lang, device)  # Pass device here
         st.write("Translated sentence:", ' '.join(output_words))
         show_attention(sentence, output_words, attentions)
     except Exception as e:
