@@ -92,7 +92,8 @@ def evaluate(encoder, decoder, sentence, input_lang, output_lang, max_length=10)
         input_length = input_tensor.size()[0]
         encoder_hidden = encoder.initHidden()  # No device needed
 
-        encoder_outputs = torch.zeros(max_length, encoder.hidden_size)  # Remove device
+        # Fix torch.zeros call, remove device
+        encoder_outputs = torch.zeros(max_length, encoder.hidden_size)
 
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(input_tensor[ei], encoder_hidden)
@@ -102,14 +103,16 @@ def evaluate(encoder, decoder, sentence, input_lang, output_lang, max_length=10)
         decoder_hidden = encoder_hidden
 
         decoded_words = []
-        decoder_attentions = torch.zeros(max_length, max_length)
+        decoder_attentions = torch.zeros(max_length, max_length)  # No device needed
 
         for di in range(max_length):
-            decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, decoder_hidden, encoder_outputs)
+            decoder_output, decoder_hidden, decoder_attention = decoder(
+                decoder_input, decoder_hidden, encoder_outputs
+            )
             decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
             if topi.item() == EOS_token:
-                decoded_words.append('<EOS>')
+                decoded_words.append("<EOS>")
                 break
             else:
                 decoded_words.append(output_lang.index2word[topi.item()])
