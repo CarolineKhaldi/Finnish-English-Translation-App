@@ -87,13 +87,17 @@ st.markdown("Translate Finnish sentences into English")
 st.sidebar.header("📖 Instructions")
 st.sidebar.write("""
 - Enter a Finnish sentence in the input box.
+
 - Press the **Translate** button.
+
 - The translation displayed
+
 - Dropdown list (1) displayed:
     Normalized sentence
     Input language words
     Output language words
     Input tensor size
+    
 - Dropdown list (2) displayed:
     Attention heatmap will be displayed.
 """)
